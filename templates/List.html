@@ -23,15 +23,18 @@
 					{% endfor %}
 					<p>---------------------------------------------------------------------</p>
 					{% for i in items %}
-					{% if i.deleted == 'true' %}
-					<form action="{{url_for('recover', id = i.id) }}" method="POST">
-						<div>
-							<i><s><p>{{i.value}}</p></s></i>
+						<div> 
+							
+							{% if i.deleted == 'true' %}
+							<form action="{{url_for('recover', id = i.id) }}" method="POST">
+									
+                                <s><i>{{i.value}}</i></s>
+							<button type="submit" id="submit" type="submit">
+							<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>add</button>
+							</form>
+							{% endif %}
 						</div>
-						<button type="submit" id="submit" type="submit">
-						<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>add</button>
-					</form>
-					{% endif %}
+						
 					{% endfor %}
 			</div>
 			<div class="col-md-1"></div>
