@@ -1,4 +1,4 @@
-from flask import Flask,render_template,request
+from flask import Flask,render_template,request,redirect,url_for
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker,scoped_session
 from database_setup import Base,Todo
@@ -28,3 +28,11 @@ def List():
     if request.method == 'GET':
         Items = session.query(Todo).all()
         return render_template('List.html', items = Items)
+
+@app.route('/delete/<int:id>', methods = ['POST'])
+def delete(id):
+    item = session.query(Todo).filter_by(id=id).one()
+    session.delete(item)
+    session.commit()
+    Items = session.query(Todo).all()
+    return redirect(url_for('List', items=Items))
