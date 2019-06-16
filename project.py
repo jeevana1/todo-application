@@ -32,7 +32,23 @@ def List():
 @app.route('/delete/<int:id>', methods = ['POST'])
 def delete(id):
     item = session.query(Todo).filter_by(id=id).one()
-    session.delete(item)
+    item.deleted = 'true'
+    session.add(item)
     session.commit()
     Items = session.query(Todo).all()
     return redirect(url_for('List', items=Items))
+
+@app.route('/recover/<int:id>', methods = ['POST'])
+def recover(id):
+    item = session.query(Todo).filter_by(id=id).one()
+    item.deleted = 'false'
+    session.add(item)
+    session.commit()
+    Items = session.query(Todo).all()
+    return redirect(url_for('List', items=Items))
+
+if __name__ == '__main__':
+    connect_args={'check_same_thread':False},
+    app.secret_key = 'super_secret_key'
+    app.debug = True
+    app.run(host = '0.0.0.0', port = 5000)
