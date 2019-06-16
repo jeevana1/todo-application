@@ -1,0 +1,17 @@
+{% block content %}
+
+<div class = 'flash'>
+
+</div>
+	
+	{% if items !=[] %}	
+			<div class="col-md-1"></div>
+			<div class="col-md-10">
+					{% for i in items %}
+							<p>{{i.value}}</p>
+					{% endfor %}
+			</div>
+			<div class="col-md-1"></div>
+		</div>
+	{% endif %}
+{% endblock %}
