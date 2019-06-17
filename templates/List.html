@@ -1,44 +1,79 @@
-{% block content %}
-<form action="" method="POST">
-		<input type ="text" name="value" placeholder="Add your next task.. ">
-		<button type="submit">ADD</button>
-</form>
+<html>
+    <head>
+        <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
+    </head>
+    <body>
+        <h2>TODO</h2>
+        {% block content %}
+            <form action="" method="POST">
+                    <input type ="text" name="value" placeholder="Add your next task.. ">
+                    <button type="submit">ADD</button>
+            </form>
+            
+                {% if items !=[] %}	
+                        <div class="col-md-1"></div>
+                        <div class="col-md-10">
+                                {% for i in items %}
+                                     
+                                        
+                                        {% if i.deleted == 'false' %}
+                                        <div class="task-block">
+                                        <div class="delete-block">
+                                            <form action="{{url_for('delete', id = i.id) }}" method="POST">
+                                                
+                                                {{i.value}}
+                                                <button type="submit" id="submit" type="submit">
+                                                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>Delete</button>
+                                            </form>
+                                        </div>
+                                        <div>
+                                                <form action="{{url_for('addSubTask', id = i.id)}}" method="GET">
+                                                    <button>
+                                                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>Add sub task
+                                                    </button>
+                                                </form>
+                                        </div>
+                                        <ul>
+                                            {% for s in sub %}
+                                            <form action="{{url_for('deleteSubTask', id = s.id) }}" method="POST">
+                                                {% if s.task_id == i.id %}
+                                                    <li>{{s.value}}
+                                                    <button type="submit" class="delete-btn">X</button></li>
+                                                {% endif %}
+                                            </form>
+                                            {% endfor %}
+                                        </ul>
+                                        
+                                        </div>
+                                        {% endif %}
 
-	{% if items !=[] %}	
-			<div class="col-md-1"></div>
-			<div class="col-md-10">
-					{% for i in items %}
-						<div> 
-							
-							{% if i.deleted == 'false' %}
-							<form action="{{url_for('delete', id = i.id) }}" method="POST">
-									
-							{{i.value}}
-							<button type="submit" id="submit" type="submit">
-							<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>Delete</button>
-							</form>
-							{% endif %}
-						</div>
-						
-					{% endfor %}
-					<p>---------------------------------------------------------------------</p>
-					{% for i in items %}
-						<div> 
-							
-							{% if i.deleted == 'true' %}
-							<form action="{{url_for('recover', id = i.id) }}" method="POST">
-									
-                                <s><i>{{i.value}}</i></s>
-							<button type="submit" id="submit" type="submit">
-							<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>add</button>
-							</form>
-							{% endif %}
-						</div>
-						
-					{% endfor %}
-			</div>
-			<div class="col-md-1"></div>
-	{% endif %}
-
-
-{% endblock %}
+                                    
+                                {% endfor %}
+                                <p>---------------------------------------------------------------------</p>
+                        </div>
+                        <div class="col-md-1"></div>
+                        
+                        <div class="col-md-10">
+                                {% for i in items %}
+                                <div> 
+                                    
+                                    {% if i.deleted == 'true' %}
+                                    <form action="{{url_for('recover', id = i.id) }}" method="POST">
+                                            
+                                        <s><i>{{i.value}}</i></s>
+                                    <button type="submit" id="submit" type="submit">
+                                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>add</button>
+                                    </form>
+                                    {% endif %}
+                                </div>
+                                
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-1"></div>
+            
+                {% endif %}
+            
+            
+            {% endblock %}
+    </body>
+</html>

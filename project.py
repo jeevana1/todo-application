@@ -1,7 +1,7 @@
 from flask import Flask,render_template,request,redirect,url_for
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker,scoped_session
-from database_setup import Base,Todo
+from database_setup import Base,Todo,SubTask
 import string
 
 
@@ -24,10 +24,12 @@ def List():
             session.add(newItem)
             session.commit()
         Items = session.query(Todo).all()
-        return render_template('List.html', items = Items)
+        subItems = session.query(SubTask).all()
+        return render_template('List.html', items = Items, sub = subItems)
     if request.method == 'GET':
         Items = session.query(Todo).all()
-        return render_template('List.html', items = Items)
+        subItems = session.query(SubTask).all()
+        return render_template('List.html', items = Items, sub = subItems)
 
 @app.route('/delete/<int:id>', methods = ['POST'])
 def delete(id):
@@ -36,7 +38,8 @@ def delete(id):
     session.add(item)
     session.commit()
     Items = session.query(Todo).all()
-    return redirect(url_for('List', items=Items))
+    subItems = session.query(SubTask).all()
+    return redirect(url_for('List', items=Items, sub = subItems))
 
 @app.route('/recover/<int:id>', methods = ['POST'])
 def recover(id):
@@ -45,7 +48,32 @@ def recover(id):
     session.add(item)
     session.commit()
     Items = session.query(Todo).all()
-    return redirect(url_for('List', items=Items))
+    subItems = session.query(SubTask).all()
+    return redirect(url_for('List', items=Items, sub = subItems))
+
+@app.route('/add/<int:id>/', methods = ['GET','POST'])
+def addSubTask(id):
+    if request.method == 'POST':
+        Task = session.query(Todo).filter_by(id=id).one()
+        if request.form['name']:
+            newItem = SubTask(value = request.form['name'], todo = Task, task_id = id)
+            session.add(newItem)
+            session.commit()
+        Items = session.query(Todo).all()
+        subItems = session.query(SubTask).all()
+        return redirect(url_for('List', items=Items, sub = subItems))
+    if request.method == 'GET':
+        return render_template('addSubTask.html')
+
+@app.route('/deleteSubTask/<int:id>', methods = ['POST'])
+def deleteSubTask(id):
+    item = session.query(SubTask).filter_by(id=id).one()
+    session.delete(item)
+    session.commit()
+    Items = session.query(Todo).all()
+    subItems = session.query(SubTask).all()
+    return redirect(url_for('List', items=Items, sub = subItems))
+
 
 if __name__ == '__main__':
     connect_args={'check_same_thread':False},
